@@ -122,6 +122,22 @@ func (b *Bookstore) UpdateBookInInventory(bookName string, bookType typeOfBook, 
 	return errors.New("Book not found in inventory, try again.")
 }
 
+func (b *Bookstore) UpdateAuthorInList(auth string, author Author) error {
+	updatedAuth := Author{
+		name:                 author.name,
+		numberOfBooksWritten: author.numberOfBooksWritten,
+	}
+
+	for i, author := range b.authors {
+		if author.name == auth {
+			b.authors[i] = updatedAuth
+			return nil
+		}
+	}
+
+	return errors.New("Author not found, please try again.")
+}
+
 func (b *Bookstore) DeleteBookInInventory(bookName string) error {
 	if bookName == "" {
 		return errors.New("Cannot have a blank name for this book. Please enter a book title.")
@@ -135,6 +151,21 @@ func (b *Bookstore) DeleteBookInInventory(bookName string) error {
 	}
 
 	return errors.New("Book not found in inventory, try again.")
+}
+
+func (b *Bookstore) DeleteAuthorInInventory(authName string) error {
+	if authName == "" {
+		return errors.New("Cannot have a blank name for this author. Please enter an author name.")
+	}
+
+	for i, auth := range b.authors {
+		if auth.name == authName {
+			b.authors = append(b.authors[:i], b.authors[i+1:]...)
+			return nil
+		}
+	}
+
+	return errors.New("Author not found in inventory, try again.")
 }
 
 func main() {
