@@ -85,6 +85,59 @@ func (b Bookstore) CountBooksAvailable() (int, int) {
 	return countInStock, countOutStock
 }
 
+
+func (b *Bookstore) UpdateBookInInventory(bookName string, bookType typeOfBook, numPages int, price float64, isInStock, isBestSelling bool, auth Author) error {
+	if bookName == "" {
+		return errors.New("Cannot have a blank name for this book. Please enter a book title.")
+	}
+
+	if numPages < 0 {
+		return errors.New("Pages cannot be negative. Check your entry and try again.")
+	}
+
+	if price < 0 {
+		return errors.New("Price cannot be less than zero. Check your entry and try again.")
+	}
+
+	updateBook := Book{
+		name:          bookName,
+		bookType:      bookType,
+		numPages:      numPages,
+		price:         price,
+		isInStock:     isInStock,
+		isBestSelling: isBestSelling,
+		author:        auth,
+	}
+
+	if updateBook.bookType == rental {
+		updateBook.price = 0.00
+	}
+
+	for i, book := range b.books {
+		if book.name == bookName {
+			b.books[i] = updateBook
+			return nil
+		}
+	}
+
+	return errors.New("Book not found in inventory, try again.")
+}
+
+func (b *Bookstore) DeleteBookInInventory(bookName string) error {
+	if bookName == "" {
+		return errors.New("Cannot have a blank name for this book. Please enter a book title.")
+	}
+
+	for i, book := range b.books {
+		if book.name == bookName {
+			b.books = append(b.books[:i], b.books[i+1:]...)
+			return nil
+		}
+	}
+
+	return errors.New("Book not found in inventory, try again.")
+}
+
 func main() {
 	fmt.Print("\n")
 	title := "Bookstore Inventory management"
@@ -130,7 +183,7 @@ func main() {
 	}
 
 	book = Book{
-		name:          "The Hobbit: There and Back Again",
+		name:          "The Hobbit: Rental",
 		bookType:      rental,
 		isInStock:     true,
 		isBestSelling: false,
@@ -144,11 +197,27 @@ func main() {
 		fmt.Println(err)
 	}
 
-	fmt.Println(bookStore)
 
+	fmt.Println(bookStore.books)
+	
 	countBooks, countBooksUn := bookStore.CountBooksAvailable()
-
 	fmt.Print("\n")
 	fmt.Printf("Total books Available: %d\nTotal books unavailable: %d\n", countBooks, countBooksUn)
 	fmt.Print("\n")
+
+	err = bookStore.UpdateBookInInventory(book.name, physicalCopy, book.numPages, 20.19, true, false, Author{"Dr Suess", 60})
+	if err != nil {
+		fmt.Println(err)
+	}
+	
+	err = bookStore.DeleteBookInInventory("Lord of The Rings")
+
+	fmt.Println(bookStore.books)
+
+	countBooks, countBooksUn = bookStore.CountBooksAvailable()
+	fmt.Print("\n")
+	fmt.Printf("Total books Available: %d\nTotal books unavailable: %d\n", countBooks, countBooksUn)
+	fmt.Print("\n")
+
+
 }
