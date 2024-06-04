@@ -85,7 +85,6 @@ func (b Bookstore) CountBooksAvailable() (int, int) {
 	return countInStock, countOutStock
 }
 
-
 func (b *Bookstore) UpdateBookInInventory(bookName string, bookType typeOfBook, numPages int, price float64, isInStock, isBestSelling bool, auth Author) error {
 	if bookName == "" {
 		return errors.New("Cannot have a blank name for this book. Please enter a book title.")
@@ -197,9 +196,8 @@ func main() {
 		fmt.Println(err)
 	}
 
-
 	fmt.Println(bookStore.books)
-	
+
 	countBooks, countBooksUn := bookStore.CountBooksAvailable()
 	fmt.Print("\n")
 	fmt.Printf("Total books Available: %d\nTotal books unavailable: %d\n", countBooks, countBooksUn)
@@ -209,7 +207,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	
+
 	err = bookStore.DeleteBookInInventory("Lord of The Rings")
 
 	fmt.Println(bookStore.books)
@@ -218,6 +216,5 @@ func main() {
 	fmt.Print("\n")
 	fmt.Printf("Total books Available: %d\nTotal books unavailable: %d\n", countBooks, countBooksUn)
 	fmt.Print("\n")
-
 
 }
